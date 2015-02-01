@@ -11,17 +11,74 @@ extern void decrypt_cesar(char * buffer, int n);
 extern void decrypt_rot13(char * buffer, int n);
 
 void crypt_cesar(char * buffer, int n){
+ 
+int i=0;
+
+for (; i<n ; i++){
+	if(buffer[i]>= 'A' && buffer[i]<='Z'){
+	buffer[i]= ((buffer[i]-'A'+3)%26) + 'A';
+		} else if(buffer[i]>='a' && buffer[i]<='z') {
+	buffer[i]= ((buffer[i]- 'a'+3)%16) +'a';
+		}
+	}
+
+
  printk("<1>module cryptage : crypt_cesar\n");
 }
 void crypt_rot13(char * buffer, int n){
+
+int i = 0;
+
+for (; i<n ; i++){
+        if(buffer[i]>= 'A' && buffer[i]<='Z'){
+        buffer[i]= ((buffer[i]-'A'+13)%26) + 'A';
+                } else if(buffer[i]>='a' && buffer[i]<='z') {
+        buffer[i]= ((buffer[i]- 'a'+13)%16) +'a';
+                }
+        }
+
+
+
+
+
  printk("<1>module cryptage : crypt_rot13\n");
 }
 
 void decrypt_cesar(char * buffer, int n){
+
+int i = 0;
+
+for (; i<n ; i++){
+        if(buffer[i]>= 'A' && buffer[i]<='Z'){
+        buffer[i]= ((buffer[i]-'A'- 3)%26) + 'A';
+                } else if(buffer[i]>='a' && buffer[i]<='z') {
+        buffer[i]= ((buffer[i]- 'a'- 3)%16) +'a';
+                }
+        }
+
+
+
+
+
  printk("<1>module cryptage : decrypt_cesar\n");
 }
 
 void decrypt_rot13(char * buffer, int n){
+
+int i = 0;
+
+for (; i<n ; i++){
+        if(buffer[i]>= 'A' && buffer[i]<='Z'){
+        buffer[i]= ((buffer[i]-'A'-13)%26) + 'A';
+                } else if(buffer[i]>='a' && buffer[i]<='z') {
+        buffer[i]= ((buffer[i]- 'a'- 13)%16) +'a';
+                }
+        }
+
+
+
+
+
  printk("<1>module cryptage : decrypt_rot13\n");
 }
 
