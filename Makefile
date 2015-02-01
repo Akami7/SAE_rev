@@ -12,3 +12,7 @@ clean:
 probe:
 	@modprobe comm
 #	@dmesg
+
+rm:
+	@rmmod comm
+	@rmmod cryptage
