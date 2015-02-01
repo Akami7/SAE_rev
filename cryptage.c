@@ -24,7 +24,7 @@ for (; i<n ; i++){
 
 
  printk("<1>module cryptage : crypt_cesar\n");
- printk("<1>Buffer =%s\n",buffer);
+// printk("<1>Buffer =%s\n",buffer);
 }
 void crypt_rot13(char * buffer, int n){
 
@@ -39,7 +39,7 @@ for (; i<n ; i++){
         }
 
  printk("<1>module cryptage : crypt_rot13\n");
- printk("<1>Buffer =%s\n",buffer);
+// printk("<1>Buffer =%s\n",buffer);
 
 
 }
@@ -58,7 +58,7 @@ for (; i<n ; i++){
 
 
  printk("<1>module cryptage : decrypt_cesar\n");
- printk("<1>Buffer =%s\n",buffer);
+// printk("<1>Buffer =%s\n",buffer);
 
 }
 
@@ -75,7 +75,7 @@ for (; i<n ; i++){
         }
 
  printk("<1>module cryptage : decrypt_rot13\n");
- printk("<1>Buffer =%s\n",buffer);
+// printk("<1>Buffer =%s\n",buffer);
 
 }
 

@@ -46,16 +46,11 @@ static int _lread(struct file *f , char * buffer , size_t len , loff_t *ptr){
 
  char buf[len];
 
- 
 
  if(copy_to_user(buffer, buf, len)!=0){
  printk("<1>Erreur copy to user\n");
 }
-// if(minor==0){
-//decrypt_cesar(buf,len);
-//}else {
-//decrypt_rot13(buf,len);
-//}
+
 
  return 0;
 
@@ -76,29 +71,24 @@ static int _lwrite(struct file *f , char * buffer, size_t len, loff_t *ptr){
  int minor;
  minor= MINOR (f->f_dentry->d_inode->i_rdev);
 
+
+
+ copy_from_user(buf + *ptr,buffer,len);
+// printk("<1>Erreur de copie from user\n");
+// return -EINVAL;
+// }
+
 if (minor == 0){
-crypt_cesar(buffer,len);
+crypt_cesar(buf,len);
 }else {
-crypt_rot13(buffer,len);
+crypt_rot13(buf,len);
 }
 
-
-
-
- if(copy_from_user(buf,buffer,len)!=0){
- printk("<1>Erreur de copie from user\n");
- return -EINVAL;
- }
-
-//if (minor == 0){
-//crypt_cesar(buf,len);
-//}else {
-//crypt_rot13(buf,len);
-//}
-
-
-
 buf[len]='\0';
+
+printk("<1>buf= %s",buf);
+
+
 
  return len;
 }
@@ -116,10 +106,10 @@ static int _init(void){
  printk("<1>Error Driver Load\n");
  }
 
- crypt_cesar("HELLO",3);
- crypt_rot13("HELLO",3);
- decrypt_cesar("HELLO",3);
- decrypt_rot13("HELLO",3);
+// crypt_cesar("AB",2);
+// crypt_rot13("AB",2);
+// decrypt_cesar("HELLO",5);
+// decrypt_rot13("HELLO",5);
  return 0;
 }
 
