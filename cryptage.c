@@ -21,11 +21,8 @@ for (; i<n ; i++){
 	buffer[i]= ((buffer[i]- 'a'+3)%16) +'a';
 		}
 	}
-
-
- printk("<1>module cryptage : crypt_cesar\n");
-// printk("<1>Buffer =%s\n",buffer);
 }
+
 void crypt_rot13(char * buffer, int n){
 
 int i = 0;
@@ -37,10 +34,6 @@ for (; i<n ; i++){
         buffer[i]= ((buffer[i]- 'a'+13)%16) +'a';
                 }
         }
-
- printk("<1>module cryptage : crypt_rot13\n");
-// printk("<1>Buffer =%s\n",buffer);
-
 
 }
 
@@ -56,10 +49,6 @@ for (; i<n ; i++){
                 }
         }
 
-
- printk("<1>module cryptage : decrypt_cesar\n");
-// printk("<1>Buffer =%s\n",buffer);
-
 }
 
 void decrypt_rot13(char * buffer, int n){
@@ -73,9 +62,6 @@ for (; i<n ; i++){
         buffer[i]= ((buffer[i]- 'a'- 13)%16) +'a';
                 }
         }
-
- printk("<1>module cryptage : decrypt_rot13\n");
-// printk("<1>Buffer =%s\n",buffer);
 
 }
 

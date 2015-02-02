@@ -6,7 +6,7 @@
 #include <asm/uaccess.h> // get_user et put_user
 
 #ifndef min
-# define min(a,b) (((a) < (b)) ? (a) : (b)
+# define min (a,b) (((a) < (b)) ? (a) : (b)
 #endif
 
 MODULE_AUTHOR("Akami");
@@ -16,7 +16,11 @@ MODULE_LICENSE("GPL");
 // Periph ==============================
 #define DEV_NAME "comm"
 #define MAX_DEVICE 5
+
 #define MAX_SIZE 256
+
+char *buf;
+int used;
 
 void crypt_cesar(char *buffer,int n);
 void crypt_rot13(char *buffer,int n);
@@ -25,58 +29,69 @@ void decrypt_rot13(char *buffer,int n);
 
 
 
-
+static int _open(struct inode *inode,struct file *file);
 static int _lwrite(struct file *f, char *buffer,size_t len, loff_t *ptr);
 static int _lread(struct file *f, char * buffer , size_t len, loff_t *ptr);
 
 struct file_operations fops = {
 	owner: THIS_MODULE,
 	read: _lread,
-	write: _lwrite
+	write: _lwrite,
+	open:_open
 };
 
 //implementation low lvl
 
 
-static int _lread(struct file *f , char * buffer , size_t len , loff_t *ptr){
+static int _open(struct inode *inode, struct file *f){
 
- printk("<1>comm periph : read\n");
+if(f->f_mode==FMODE_WRITE)
+used=0;
 
- int minor = MINOR(f->f_dentry->d_inode->i_rdev);
-
- char buf[len];
-
-
- if(copy_to_user(buffer, buf, len)!=0){
- printk("<1>Erreur copy to user\n");
+if(buf==NULL){
+	if((buf=(char *) kmalloc(MAX_SIZE,GFP_KERNEL))==0){
+	printk("<1>Probleme d'allocation buf\n");
+	 return -ENOMEM;
+	 }
+	}
+return 0;
 }
 
+static int _lread(struct file *f , char * buffer , size_t len , loff_t *ptr){
 
- return 0;
+
+ int n;
+ int minor = MINOR(f->f_dentry->d_inode->i_rdev);
+
+ n= min((size_t)(used - *ptr),len);
+
+
+ if(copy_to_user(buffer, buf + *ptr , n)!=0){
+ printk("<1>Erreur copy to user\n");
+ return -EINVAL;
+}
+*ptr += n;
+
+if(minor == 0)
+{decrypt_cesar(buffer,n);
+}else {decrypt_rot13(buffer,n);}
+
+ return n;
 
 }
 
 static int _lwrite(struct file *f , char * buffer, size_t len, loff_t *ptr){
 
+ int minor = MINOR(f->f_dentry->d_inode->i_rdev);
 
- printk("<1>comm periph : write\n");
-
-
- char buf[len];
- if(len > MAX_SIZE) {
+ if(*ptr + len > MAX_SIZE) {
  printk ("<1>error size flow\n");
  return  -EMSGSIZE;
  }
 
- int minor;
- minor= MINOR (f->f_dentry->d_inode->i_rdev);
-
-
-
  copy_from_user(buf + *ptr,buffer,len);
-// printk("<1>Erreur de copie from user\n");
-// return -EINVAL;
-// }
+ *ptr+=len;
+
 
 if (minor == 0){
 crypt_cesar(buf,len);
@@ -88,8 +103,7 @@ buf[len]='\0';
 
 printk("<1>buf= %s",buf);
 
-
-
+ used= *ptr;
  return len;
 }
 
@@ -106,10 +120,7 @@ static int _init(void){
  printk("<1>Error Driver Load\n");
  }
 
-// crypt_cesar("AB",2);
-// crypt_rot13("AB",2);
-// decrypt_cesar("HELLO",5);
-// decrypt_rot13("HELLO",5);
+ buf =NULL;
  return 0;
 }
 
